@@ -1,0 +1,35 @@
+{
+  "name": "walletprovider-ts",
+  "version": "0.0.1",
+  "description": "Server Side Wallet Providers",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "scripts": {
+    "build": "tsc -p ./tsconfig.json",
+    "unit": "npm run build && npm run nobuild:unit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GOATNetwork/walletprovider-ts"
+  },
+  "files": [
+    "src"
+  ],
+  "dependencies": {
+    "bech32": "^2.0.0",
+    "ecpair": "^2.0.1",
+    "bip174": "^2.1.1",
+    "bitcoin-core": "^4.2.0",
+    "bitcoinjs-lib": "6.1.5",
+    "bs58check": "^3.0.1",
+    "date-fns": "^3.6.0",
+    "tiny-secp256k1": "^2.2.3",
+    "typeforce": "^1.11.3",
+    "varuint-bitcoin": "^1.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.11",
+    "typescript": "^5.3.3"
+  },
+  "license": "MIT"
+}
