@@ -33,7 +33,7 @@ export class BitcoinCoreWallet extends WalletProvider {
       host, 
       port,
     });
-    this.client.walletPassphrase("btcstaker", 3600);
+    //this.client.walletPassphrase("btcstaker", 3600);
   }
 
   async dumpPrivKey(address?: string) {
