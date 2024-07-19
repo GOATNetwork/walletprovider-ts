@@ -23,15 +23,15 @@ function convertBtcKvBToSatoshiPerByte(btcPerKvB: number) {
 export class BitcoinCoreWallet extends WalletProvider {
   private client: any;
 
-  constructor(walletName = "legacy_wallet") {
+  constructor(walletName: string, host:string, port: string, username: string, password: string, network: string) {
     super();
     this.client = new Client({
       wallet: walletName,
-      network: 'regtest',
-      username: '111111',
-      password: '111111',
-      host: 'ec2-3-15-141-150.us-east-2.compute.amazonaws.com',
-      port: 18443 // default Bitcoin Core RPC port for regtest
+      network,
+      username,
+      password,
+      host, 
+      port,
     });
     this.client.walletPassphrase("btcstaker", 3600);
   }
@@ -235,7 +235,7 @@ export class BitcoinCoreWallet extends WalletProvider {
 
 export let bitcoinWallet: BitcoinCoreWallet;
 
-export const initBitcoinCoreWallet = (walletName?: string) => {
-  bitcoinWallet = new BitcoinCoreWallet(walletName);
+export const initBitcoinCoreWallet = (walletName: string, host: string, port: string, username: string, password: string, network: string) => {
+  bitcoinWallet = new BitcoinCoreWallet(walletName, host, port, username, password, network);
   return bitcoinWallet;
 };
