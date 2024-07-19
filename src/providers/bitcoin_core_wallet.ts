@@ -23,7 +23,7 @@ function convertBtcKvBToSatoshiPerByte(btcPerKvB: number) {
 export class BitcoinCoreWallet extends WalletProvider {
   private client: any;
 
-  constructor(walletName: string, host:string, port: string, username: string, password: string, network: string) {
+  constructor(walletName: string, host:string, port: number, username: string, password: string, network: string) {
     super();
     this.client = new Client({
       wallet: walletName,
@@ -235,7 +235,7 @@ export class BitcoinCoreWallet extends WalletProvider {
 
 export let bitcoinWallet: BitcoinCoreWallet;
 
-export const initBitcoinCoreWallet = (walletName: string, host: string, port: string, username: string, password: string, network: string) => {
+export const initBitcoinCoreWallet = (walletName: string, host: string, port: number, username: string, password: string, network: string) => {
   bitcoinWallet = new BitcoinCoreWallet(walletName, host, port, username, password, network);
   return bitcoinWallet;
 };
