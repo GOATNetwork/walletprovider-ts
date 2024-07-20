@@ -13,7 +13,8 @@
     "url": "https://github.com/GOATNetwork/walletprovider-ts"
   },
   "files": [
-    "src"
+    "src",
+    "lib"
   ],
   "dependencies": {
     "bech32": "^2.0.0",
