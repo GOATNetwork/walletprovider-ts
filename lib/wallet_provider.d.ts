@@ -10,6 +10,7 @@ export interface UTXO {
     vout: number;
     value: number;
     scriptPubKey: string;
+    rawTransaction: string;
 }
 export declare enum Network {
     MAINNET = "mainnet",
