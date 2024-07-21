@@ -36,6 +36,10 @@ export class BitcoinCoreWallet extends WalletProvider {
     //this.client.walletPassphrase("btcstaker", 3600);
   }
 
+  async walletPassphrase(passphrase: string, timeout: number) {
+    return await this.client.walletPassphrase(passphrase, timeout);
+  }
+
   async dumpPrivKey(address?: string) {
      let addr = address || await this.getAddress();
      let privateKey = await this.client.dumpPrivKey(addr);
