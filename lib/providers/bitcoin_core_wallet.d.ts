@@ -2,6 +2,7 @@ import { WalletProvider, Network, Fees, UTXO } from "../wallet_provider";
 export declare class BitcoinCoreWallet extends WalletProvider {
     private client;
     constructor(walletName: string, host: string, port: number, username: string, password: string, network: string);
+    walletPassphrase(passphrase: string, timeout: number): Promise<any>;
     dumpPrivKey(address?: string): Promise<import("ecpair").ECPairInterface>;
     getTransaction(txid: string): Promise<any>;
     connectWallet(): Promise<this>;
