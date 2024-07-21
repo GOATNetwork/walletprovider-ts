@@ -141,7 +141,7 @@ export class BitcoinCoreWallet extends WalletProvider {
     if (shouldExtractTransaction) {
       psbt.finalizeAllInputs();
       const transaction = psbt.extractTransaction();
-      return transaction;
+      return transaction.toHex();
     } else {
       return psbt.toBase64();
     }
