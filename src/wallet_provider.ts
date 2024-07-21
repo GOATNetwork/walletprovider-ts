@@ -21,6 +21,8 @@ export interface UTXO {
   value: number;
   // the script that the UTXO contains
   scriptPubKey: string;
+  // raw transaction
+  rawTransaction: string;
 }
 
 // supported networks

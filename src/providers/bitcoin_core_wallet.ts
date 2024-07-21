@@ -30,7 +30,7 @@ export class BitcoinCoreWallet extends WalletProvider {
       network,
       username,
       password,
-      host, 
+      host,
       port,
     });
     //this.client.walletPassphrase("btcstaker", 3600);
@@ -203,9 +203,8 @@ export class BitcoinCoreWallet extends WalletProvider {
     return this.client.sendRawTransaction(txHex);
   }
 
-  async getUtxos(address: string, amount?: number): Promise<UTXO[]> {
+  async getUtxos(address: string, amount?: number, needGetRawTransaction: boolean = false): Promise<UTXO[]> {
     const utxos = await this.client.listUnspent(0, 9999999, [address]);
-    //console.log("utxos: ", utxos);
     const filteredUtxos = utxos.map((utxo: any) => ({
       txid: utxo.txid,
       vout: utxo.vout,
@@ -215,18 +214,43 @@ export class BitcoinCoreWallet extends WalletProvider {
 
     if (amount) {
       let totalAmount = 0;
-      const result = [];
+      const result: UTXO[] = [];
+
       for (const utxo of filteredUtxos) {
         totalAmount += utxo.value;
         result.push(utxo);
-        if (totalAmount >= amount) break;
+        if (totalAmount >= amount) break; // Only accumulate enough UTXOs to cover the amount
       }
-      return totalAmount >= amount ? result : [];
+
+      if (totalAmount < amount) {
+        return []; // Not enough funds
+      }
+
+      let promises = [];
+
+      if (needGetRawTransaction) {
+        promises = result.map(async utxo => {
+          const transaction = await this.client.getTransaction(utxo.txid);
+          return { ...utxo, rawTransaction: transaction.hex };
+        });
+      } else {
+        promises = result.map(async utxo => {
+          return { ...utxo };
+        });
+      }
+      // Fetch raw transactions only for the necessary UTXOs
+
+
+      return await Promise.all(promises);
     }
 
+    // If no specific amount is requested, return all UTXOs without fetching raw transactions
     return filteredUtxos;
   }
 
+  async getRawTransaction(txid: string): Promise<string> {
+    return this.client.getRawTransaction(txid);
+  }
   async getBTCTipHeight(): Promise<number> {
     const blockchainInfo = await this.client.getBlockchainInfo();
     return blockchainInfo.blocks;
