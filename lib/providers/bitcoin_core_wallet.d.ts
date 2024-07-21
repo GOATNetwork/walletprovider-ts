@@ -20,7 +20,8 @@ export declare class BitcoinCoreWallet extends WalletProvider {
     getNetworkFees(): Promise<Fees>;
     getBalance(): Promise<number>;
     pushTx(txHex: string): Promise<string>;
-    getUtxos(address: string, amount?: number): Promise<UTXO[]>;
+    getUtxos(address: string, amount?: number, needGetRawTransaction?: boolean): Promise<UTXO[]>;
+    getRawTransaction(txid: string): Promise<string>;
     getBTCTipHeight(): Promise<number>;
 }
 export declare let bitcoinWallet: BitcoinCoreWallet;
