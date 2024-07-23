@@ -16,6 +16,6 @@ export const walletList: IntegratedWallet[] = [
     icon: "",
     wallet: "",
     provider: "",
-    linkToDocs: "",
-  },
+    linkToDocs: ""
+  }
 ];
