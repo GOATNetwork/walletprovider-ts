@@ -18,6 +18,6 @@ jobs:
         - uses: actions/setup-node@v2
           with:
             node-version: 18.x
-        - run: yarn install --frozen-lockfile
+        - run: npm install
         - name: Lint Check
-          run: yarn lint_ts
+          run: npm run lint

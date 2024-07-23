@@ -232,12 +232,12 @@ export class BitcoinCoreWallet extends WalletProvider {
       let promises = [];
 
       if (needGetRawTransaction) {
-        promises = result.map(async utxo => {
+        promises = result.map(async (utxo) => {
           const transaction = await this.client.getTransaction(utxo.txid);
           return { ...utxo, rawTransaction: transaction.hex };
         });
       } else {
-        promises = result.map(async utxo => {
+        promises = result.map(async (utxo) => {
           return { ...utxo };
         });
       }
