@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { networks } from "bitcoinjs-lib";
 import { Network } from "./wallet_provider";
 export declare const toNetwork: (network: Network) => networks.Network;
