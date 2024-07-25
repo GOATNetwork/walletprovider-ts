@@ -122,17 +122,19 @@ export class BitcoinCoreWallet extends WalletProvider {
     return this.client.walletCreateFundedPsbt({ inputs, outputs })
   }
 
-  async finalizePsbt({
-    psbtHex
-  }: {
+  async finalizePsbt(
     psbtHex: string
-  }): Promise<{ psbt: string; hex: string; complete: boolean }> {
+  ): Promise<{ psbt: string; hex: string; complete: boolean }> {
     let psbt = Buffer.from(psbtHex, "hex").toString("base64");
-    return this.client.finalizePsbt({ psbt })
+    return this.client.finalizePsbt(psbt)
   }
 
   async mine(num: number, addr: string) {
       await this.client.generateToAddress(num, addr)
+  }
+
+  async decodePsbt(psbtHex: string) {
+    return this.client.decodePsbt(Buffer.from(psbtHex, "hex").toString("base64"));
   }
 
   async signPsbt(psbtHex: string): Promise<string> {
@@ -144,7 +146,6 @@ export class BitcoinCoreWallet extends WalletProvider {
 
     return Buffer.from(signedPsbt.psbt, "base64").toString("hex");
   }
-
 
   async signPsbts(psbtsHexes: string[]): Promise<string[]> {
     const signedPsbts = [];
@@ -186,7 +187,7 @@ export class BitcoinCoreWallet extends WalletProvider {
   }
 
   async getUtxos(address: string, amount?: number, needGetRawTransaction: boolean = false): Promise<UTXO[]> {
-    const utxos = await this.client.listUnspent(0, 9999999, [address]);
+    const utxos = await this.client.listUnspent(1, 9999999, [address]);
     const filteredUtxos = utxos.map((utxo: any) => ({
       txid: utxo.txid,
       vout: utxo.vout,
