@@ -13,7 +13,19 @@ export declare class BitcoinCoreWallet extends WalletProvider {
     getNewAddress(): Promise<string>;
     getPublicKeyHex(): Promise<string>;
     getPublicKey(address: string): Promise<string>;
-    signPsbtFromBase64(psbtBase64: string, ecPairs: any[], shouldExtractTransaction: boolean): Promise<any>;
+    walletCreateFundedPsbt({ inputs, outputs, }: {
+        inputs: [];
+        outputs: Record<string, number>[];
+    }): Promise<{
+        psbt: string;
+    }>;
+    finalizePsbt({ psbtHex, }: {
+        psbtHex: string;
+    }): Promise<{
+        psbt: string;
+        hex: string;
+        complete: boolean;
+    }>;
     mine(num: number, addr: string): Promise<void>;
     signPsbt(psbtHex: string): Promise<string>;
     signPsbts(psbtsHexes: string[]): Promise<string[]>;

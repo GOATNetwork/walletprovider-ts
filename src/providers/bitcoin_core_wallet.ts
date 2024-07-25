@@ -42,7 +42,6 @@ export class BitcoinCoreWallet extends WalletProvider {
   async dumpPrivKey(address?: string) {
      let addr = address || await this.getAddress();
      let privateKey = await this.client.dumpPrivKey(addr);
-    console.log("private key: ", privateKey, privateKey.toString("hex"));
     return ECPair.fromWIF(privateKey, bitcoin.networks.regtest);
   }
 
@@ -55,7 +54,6 @@ export class BitcoinCoreWallet extends WalletProvider {
     // Attempt to get the wallet info to check if the client can connect to the node
     try {
       const walletInfo = await this.client.getWalletInfo();
-      console.log(walletInfo); // log to verify connection
       return walletInfo;
       // return this;
     } catch (error) {
@@ -84,7 +82,6 @@ export class BitcoinCoreWallet extends WalletProvider {
     } else {
       // If no address with this label, create a new taproot address and label it
       const newAddress = await this.client.getNewAddress(label, "bech32");
-      console.log("Taproot Address:", newAddress);
       return newAddress;
     }
   }
@@ -98,7 +95,6 @@ export class BitcoinCoreWallet extends WalletProvider {
     } else {
       // If no address with this label, create a new taproot address and label it
       const newAddress = await this.client.getNewAddress(label, "bech32m");
-      console.log("Taproot Address:", newAddress);
       return newAddress;
     }
   }
@@ -116,38 +112,23 @@ export class BitcoinCoreWallet extends WalletProvider {
     return res.pubkey;
   }
 
-  async signPsbtFromBase64(psbtBase64: string, ecPairs: any[], shouldExtractTransaction: boolean) {
-    /*
-    if (ecPairs.length == 0) {
-        let walletPrv = await this.dumpPrivKey();
-        ecPairs.push(walletPrv)
-    }
-    */
-    const psbt = bitcoin.Psbt.fromBase64(psbtBase64);
+  async walletCreateFundedPsbt({
+    inputs,
+    outputs
+  }: {
+    inputs: []
+    outputs: Record<string, number>[]
+  }): Promise<{ psbt: string }> {
+    return this.client.walletCreateFundedPsbt({ inputs, outputs })
+  }
 
-    for (let i = 0; i < psbt.inputCount; i++) {
-      ecPairs.forEach((ecPair) => {
-        psbt.signInput(i, ecPair);
-      });
-    }
-
-    /*
-    ecPairs.forEach(ecPair => {
-      for (let i = 0; i < psbt.inputCount; i++) {
-        if (!psbt.validateSignaturesOfInput(i, ecPair.publicKey)) {
-          throw new Error(`Invalid signature for input ${i}`);
-        }
-      }
-    });
-    */
-
-    if (shouldExtractTransaction) {
-      psbt.finalizeAllInputs();
-      const transaction = psbt.extractTransaction();
-      return transaction.toHex();
-    } else {
-      return psbt.toBase64();
-    }
+  async finalizePsbt({
+    psbtHex
+  }: {
+    psbtHex: string
+  }): Promise<{ psbt: string; hex: string; complete: boolean }> {
+    let psbt = Buffer.from(psbtHex, "hex").toString("base64");
+    return this.client.finalizePsbt({ psbt })
   }
 
   async mine(num: number, addr: string) {
@@ -155,9 +136,7 @@ export class BitcoinCoreWallet extends WalletProvider {
   }
 
   async signPsbt(psbtHex: string): Promise<string> {
-    console.log("Signing PSBT with hex:", psbtHex);
     const signedPsbt = await this.client.walletProcessPsbt(Buffer.from(psbtHex, "hex").toString("base64"));
-    console.log("Signed PSBT:", signedPsbt);
 
     if (!signedPsbt.complete) {
       console.error("PSBT signing incomplete");
