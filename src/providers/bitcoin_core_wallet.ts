@@ -147,6 +147,10 @@ export class BitcoinCoreWallet extends WalletProvider {
     return Buffer.from(signedPsbt.psbt, "base64").toString("hex");
   }
 
+  async combinePsbt(txs: string[]) {
+      return this.client.combinePsbt(txs);
+  }
+
   async signPsbts(psbtsHexes: string[]): Promise<string[]> {
     const signedPsbts = [];
     for (const psbtHex of psbtsHexes) {
