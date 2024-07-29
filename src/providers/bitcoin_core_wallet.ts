@@ -150,7 +150,7 @@ export class BitcoinCoreWallet extends WalletProvider {
   async combinePsbt(txsHex: string[]): Promise<string> {
     const txsBase64 = txsHex.map((x) => Buffer.from(x, "hex").toString("base64"))
     let combinedPsbt = await this.client.combinePsbt(txsBase64);
-    return Buffer.from(combinedPsbt.psbt, "base64").toString("hex");
+    return Buffer.from(combinedPsbt, "base64").toString("hex");
   }
 
   async signPsbts(psbtsHexes: string[]): Promise<string[]> {
