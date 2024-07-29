@@ -112,18 +112,25 @@ export class BitcoinCoreWallet extends WalletProvider {
     return res.pubkey;
   }
 
-  async walletCreateFundedPsbt({
-    inputs,
-    outputs
-  }: {
-    inputs: []
-    outputs: Record<string, number>[]
-  }): Promise<{psbt: string, fee: number, changepos: number}> {
-    const options = {
-      replaceable: true,
-      feeRate: 0.0001
-    };
-    return this.client.walletCreateFundedPsbt({ inputs, outputs, options});
+  async walletCreateFundedPsbt(
+    inputs: any[],
+    outputs: Record<string, number>[],
+    locktime: number = 0,
+    options: any = {},
+    bip32derivs: boolean = true,
+  ): Promise<{psbt: string, fee: number, changepos: number}> {
+    /*
+    if (!options) {
+        options = {}
+    }
+    if (!locktime) {
+        locktime = 0;
+    }
+    if (!bip32derivs) {
+        bip32derivs = true;
+    }
+    */
+    return this.client.walletCreateFundedPsbt(inputs, outputs, locktime, options, bip32derivs);
   }
 
   async finalizePsbt(

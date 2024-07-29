@@ -13,10 +13,7 @@ export declare class BitcoinCoreWallet extends WalletProvider {
     getNewAddress(): Promise<string>;
     getPublicKeyHex(): Promise<string>;
     getPublicKey(address: string): Promise<string>;
-    walletCreateFundedPsbt({ inputs, outputs }: {
-        inputs: [];
-        outputs: Record<string, number>[];
-    }): Promise<{
+    walletCreateFundedPsbt(inputs: any[], outputs: Record<string, number>[], locktime?: number, options?: any, bip32derivs?: boolean): Promise<{
         psbt: string;
         fee: number;
         changepos: number;
