@@ -27,7 +27,7 @@ export declare class BitcoinCoreWallet extends WalletProvider {
     mine(num: number, addr: string): Promise<void>;
     decodePsbt(psbtHex: string): Promise<any>;
     signPsbt(psbtHex: string): Promise<string>;
-    combinePsbt(txs: string[]): Promise<any>;
+    combinePsbt(txsHex: string[]): Promise<string>;
     signPsbts(psbtsHexes: string[]): Promise<string[]>;
     signMessageBIP322(message: string): Promise<string>;
     getNetworkFees(): Promise<Fees>;
