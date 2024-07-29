@@ -118,7 +118,7 @@ export class BitcoinCoreWallet extends WalletProvider {
   }: {
     inputs: []
     outputs: Record<string, number>[]
-  }): Promise<{psbtBase64: string, fee: number, changepos: number}> {
+  }): Promise<{psbt: string, fee: number, changepos: number}> {
     return this.client.walletCreateFundedPsbt({ inputs, outputs });
   }
 
