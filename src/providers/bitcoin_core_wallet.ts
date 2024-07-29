@@ -118,8 +118,13 @@ export class BitcoinCoreWallet extends WalletProvider {
   }: {
     inputs: []
     outputs: Record<string, number>[]
-  }): Promise<{ psbt: string }> {
-    return this.client.walletCreateFundedPsbt({ inputs, outputs })
+  }): Promise<{psbt: string, fee: number, changepos: number}> {
+    let psbt = this.client.walletCreateFundedPsbt({ inputs, outputs });
+    return {
+        psbt: Buffer.from(psbt, "base64").toString("hex"),
+        fee: psbt.fee,
+        changepos: psbt.changepos
+    }
   }
 
   async finalizePsbt(

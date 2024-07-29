@@ -18,6 +18,8 @@ export declare class BitcoinCoreWallet extends WalletProvider {
         outputs: Record<string, number>[];
     }): Promise<{
         psbt: string;
+        fee: number;
+        changepos: number;
     }>;
     finalizePsbt(psbtHex: string): Promise<{
         psbt: string;
