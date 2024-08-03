@@ -212,7 +212,7 @@ export class BitcoinCoreWallet extends WalletProvider {
     const filteredUtxos = utxos.map((utxo: any) => ({
       txid: utxo.txid,
       vout: utxo.vout,
-      value: utxo.amount * 1e8, // Convert BTC to satoshis
+      value: Math.round(utxo.amount * 1e8), // Convert BTC to satoshis as an integer
       scriptPubKey: utxo.scriptPubKey
     }));
 
