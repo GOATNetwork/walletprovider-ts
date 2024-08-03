@@ -6,6 +6,8 @@
   "types": "./src/index.d.ts",
   "scripts": {
     "build": "tsc -p ./tsconfig.json",
+    "lint_ts": "./node_modules/.bin/eslint --fix --ext .ts src",
+    "lint": "npm run lint_ts",
     "unit": "npm run build && npm run nobuild:unit"
   },
   "repository": {
@@ -18,19 +20,24 @@
   ],
   "dependencies": {
     "bech32": "^2.0.0",
-    "ecpair": "^2.0.1",
     "bip174": "^2.1.1",
     "bitcoin-core": "^4.2.0",
     "bitcoinjs-lib": "6.1.5",
     "bs58check": "^3.0.1",
     "date-fns": "^3.6.0",
+    "ecpair": "^2.0.1",
     "tiny-secp256k1": "^2.2.3",
     "typeforce": "^1.11.3",
     "varuint-bitcoin": "^1.1.2"
   },
   "devDependencies": {
     "@types/node": "^20.14.11",
-    "typescript": "^5.3.3"
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^7.17.0"
   },
   "license": "MIT"
 }

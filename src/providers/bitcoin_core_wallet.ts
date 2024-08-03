@@ -3,20 +3,19 @@ import {
   WalletProvider,
   Network,
   Fees,
-  UTXO,
-  WalletInfo,
+  UTXO
 } from "../wallet_provider";
 
 import * as ecc from "tiny-secp256k1";
 import ECPairFactory from "ecpair";
-const bitcoin = require('bitcoinjs-lib');
+const bitcoin = require("bitcoinjs-lib");
 
 bitcoin.initEccLib(ecc);
 const ECPair = ECPairFactory(ecc);
 
 function convertBtcKvBToSatoshiPerByte(btcPerKvB: number) {
-  const satoshiPerKB = btcPerKvB * 100000000; // 从 BTC/kvB 转换为 satoshi/kB
-  const satoshiPerByte = satoshiPerKB / 1000; // 从 satoshi/kB 转换为 satoshi/byte
+  const satoshiPerKB = btcPerKvB * 100000000; // BTC/kvB to satoshi/kB
+  const satoshiPerByte = satoshiPerKB / 1000; // satoshi/kB to satoshi/byte
   return satoshiPerByte;
 }
 
@@ -31,9 +30,9 @@ export class BitcoinCoreWallet extends WalletProvider {
       username,
       password,
       host,
-      port,
+      port
     });
-    //this.client.walletPassphrase("btcstaker", 3600);
+    // this.client.walletPassphrase("btcstaker", 3600);
   }
 
   async walletPassphrase(passphrase: string, timeout: number) {
@@ -52,7 +51,7 @@ export class BitcoinCoreWallet extends WalletProvider {
   }
 
   async connectWallet(): Promise<this> {
-    'use server';
+    "use server";
     // Attempt to get the wallet info to check if the client can connect to the node
     try {
       const walletInfo = await this.client.getWalletInfo();
@@ -60,7 +59,7 @@ export class BitcoinCoreWallet extends WalletProvider {
       return walletInfo;
       // return this;
     } catch (error) {
-      throw new Error('Failed to connect to Bitcoin Core: ' + (error as Error).message);
+      throw new Error("Failed to connect to Bitcoin Core: " + (error as Error).message);
     }
   }
 
@@ -84,7 +83,7 @@ export class BitcoinCoreWallet extends WalletProvider {
       return addresses[0].address;
     } else {
       // If no address with this label, create a new taproot address and label it
-      const newAddress = await this.client.getNewAddress(label, 'bech32');
+      const newAddress = await this.client.getNewAddress(label, "bech32");
       console.log("Taproot Address:", newAddress);
       return newAddress;
     }
@@ -127,7 +126,7 @@ export class BitcoinCoreWallet extends WalletProvider {
     const psbt = bitcoin.Psbt.fromBase64(psbtBase64);
 
     for (let i = 0; i < psbt.inputCount; i++) {
-      ecPairs.forEach(ecPair => {
+      ecPairs.forEach((ecPair) => {
         psbt.signInput(i, ecPair);
       });
     }
@@ -156,15 +155,15 @@ export class BitcoinCoreWallet extends WalletProvider {
   }
 
   async signPsbt(psbtHex: string): Promise<string> {
-    console.log('Signing PSBT with hex:', psbtHex);
-    const signedPsbt = await this.client.walletProcessPsbt(Buffer.from(psbtHex, 'hex').toString('base64'));
-    console.log('Signed PSBT:', signedPsbt);
+    console.log("Signing PSBT with hex:", psbtHex);
+    const signedPsbt = await this.client.walletProcessPsbt(Buffer.from(psbtHex, "hex").toString("base64"));
+    console.log("Signed PSBT:", signedPsbt);
 
     if (!signedPsbt.complete) {
-      console.error('PSBT signing incomplete');
+      console.error("PSBT signing incomplete");
     }
 
-    return Buffer.from(signedPsbt.psbt, 'base64').toString('hex');
+    return Buffer.from(signedPsbt.psbt, "base64").toString("hex");
   }
 
 
@@ -233,12 +232,12 @@ export class BitcoinCoreWallet extends WalletProvider {
       let promises = [];
 
       if (needGetRawTransaction) {
-        promises = result.map(async utxo => {
+        promises = result.map(async (utxo) => {
           const transaction = await this.client.getTransaction(utxo.txid);
           return { ...utxo, rawTransaction: transaction.hex };
         });
       } else {
-        promises = result.map(async utxo => {
+        promises = result.map(async (utxo) => {
           return { ...utxo };
         });
       }
