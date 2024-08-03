@@ -42,7 +42,6 @@ export class BitcoinCoreWallet extends WalletProvider {
   async dumpPrivKey(address?: string) {
      let addr = address || await this.getAddress();
      let privateKey = await this.client.dumpPrivKey(addr);
-    console.log("private key: ", privateKey, privateKey.toString("hex"));
     return ECPair.fromWIF(privateKey, bitcoin.networks.regtest);
   }
 
@@ -55,7 +54,6 @@ export class BitcoinCoreWallet extends WalletProvider {
     // Attempt to get the wallet info to check if the client can connect to the node
     try {
       const walletInfo = await this.client.getWalletInfo();
-      console.log(walletInfo); // log to verify connection
       return walletInfo;
       // return this;
     } catch (error) {
@@ -84,7 +82,6 @@ export class BitcoinCoreWallet extends WalletProvider {
     } else {
       // If no address with this label, create a new taproot address and label it
       const newAddress = await this.client.getNewAddress(label, "bech32");
-      console.log("Taproot Address:", newAddress);
       return newAddress;
     }
   }
@@ -98,7 +95,6 @@ export class BitcoinCoreWallet extends WalletProvider {
     } else {
       // If no address with this label, create a new taproot address and label it
       const newAddress = await this.client.getNewAddress(label, "bech32m");
-      console.log("Taproot Address:", newAddress);
       return newAddress;
     }
   }
@@ -116,48 +112,44 @@ export class BitcoinCoreWallet extends WalletProvider {
     return res.pubkey;
   }
 
-  async signPsbtFromBase64(psbtBase64: string, ecPairs: any[], shouldExtractTransaction: boolean) {
+  async walletCreateFundedPsbt(
+    inputs: any[],
+    outputs: Record<string, number>[],
+    locktime: number = 0,
+    options: any = {},
+    bip32derivs: boolean = true,
+  ): Promise<{psbt: string, fee: number, changepos: number}> {
     /*
-    if (ecPairs.length == 0) {
-        let walletPrv = await this.dumpPrivKey();
-        ecPairs.push(walletPrv)
+    if (!options) {
+        options = {}
+    }
+    if (!locktime) {
+        locktime = 0;
+    }
+    if (!bip32derivs) {
+        bip32derivs = true;
     }
     */
-    const psbt = bitcoin.Psbt.fromBase64(psbtBase64);
+    return this.client.walletCreateFundedPsbt(inputs, outputs, locktime, options, bip32derivs);
+  }
 
-    for (let i = 0; i < psbt.inputCount; i++) {
-      ecPairs.forEach((ecPair) => {
-        psbt.signInput(i, ecPair);
-      });
-    }
-
-    /*
-    ecPairs.forEach(ecPair => {
-      for (let i = 0; i < psbt.inputCount; i++) {
-        if (!psbt.validateSignaturesOfInput(i, ecPair.publicKey)) {
-          throw new Error(`Invalid signature for input ${i}`);
-        }
-      }
-    });
-    */
-
-    if (shouldExtractTransaction) {
-      psbt.finalizeAllInputs();
-      const transaction = psbt.extractTransaction();
-      return transaction.toHex();
-    } else {
-      return psbt.toBase64();
-    }
+  async finalizePsbt(
+    psbtHex: string
+  ): Promise<{ psbt: string; hex: string; complete: boolean }> {
+    let psbt = Buffer.from(psbtHex, "hex").toString("base64");
+    return this.client.finalizePsbt(psbt)
   }
 
   async mine(num: number, addr: string) {
       await this.client.generateToAddress(num, addr)
   }
 
+  async decodePsbt(psbtHex: string) {
+    return this.client.decodePsbt(Buffer.from(psbtHex, "hex").toString("base64"));
+  }
+
   async signPsbt(psbtHex: string): Promise<string> {
-    console.log("Signing PSBT with hex:", psbtHex);
     const signedPsbt = await this.client.walletProcessPsbt(Buffer.from(psbtHex, "hex").toString("base64"));
-    console.log("Signed PSBT:", signedPsbt);
 
     if (!signedPsbt.complete) {
       console.error("PSBT signing incomplete");
@@ -166,6 +158,11 @@ export class BitcoinCoreWallet extends WalletProvider {
     return Buffer.from(signedPsbt.psbt, "base64").toString("hex");
   }
 
+  async combinePsbt(txsHex: string[]): Promise<string> {
+    const txsBase64 = txsHex.map((x) => Buffer.from(x, "hex").toString("base64"))
+    let combinedPsbt = await this.client.combinePsbt(txsBase64);
+    return Buffer.from(combinedPsbt, "base64").toString("hex");
+  }
 
   async signPsbts(psbtsHexes: string[]): Promise<string[]> {
     const signedPsbts = [];
@@ -207,7 +204,7 @@ export class BitcoinCoreWallet extends WalletProvider {
   }
 
   async getUtxos(address: string, amount?: number, needGetRawTransaction: boolean = false): Promise<UTXO[]> {
-    const utxos = await this.client.listUnspent(0, 9999999, [address]);
+    const utxos = await this.client.listUnspent(1, 9999999, [address]);
     const filteredUtxos = utxos.map((utxo: any) => ({
       txid: utxo.txid,
       vout: utxo.vout,
