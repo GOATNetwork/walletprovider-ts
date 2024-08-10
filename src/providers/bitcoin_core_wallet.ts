@@ -6,7 +6,7 @@ import {
   UTXO
 } from "../wallet_provider";
 
-import * as ecc from "tiny-secp256k1";
+import * as ecc from "@bitcoin-js/tiny-secp256k1-asmjs";
 import ECPairFactory from "ecpair";
 const bitcoin = require("bitcoinjs-lib");
 
@@ -117,7 +117,7 @@ export class BitcoinCoreWallet extends WalletProvider {
     outputs: Record<string, number>[],
     locktime: number = 0,
     options: any = {},
-    bip32derivs: boolean = true,
+    bip32derivs: boolean = true
   ): Promise<{psbt: string, fee: number, changepos: number}> {
     /*
     if (!options) {
