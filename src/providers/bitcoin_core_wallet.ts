@@ -148,11 +148,25 @@ export class BitcoinCoreWallet extends WalletProvider {
     return this.client.decodePsbt(Buffer.from(psbtHex, "hex").toString("base64"));
   }
 
-  async signPsbt(psbtHex: string): Promise<string> {
-    const signedPsbt = await this.client.walletProcessPsbt(Buffer.from(psbtHex, "hex").toString("base64"));
+  async signPsbt(
+    psbtHex: string,
+    sign: boolean = true,
+    sighashtype: string = 'DEFAULT',
+    bip32derivs: boolean = true,
+        finalize: boolean = true
+  ): Promise<string> {
+    console.log('Signing PSBT with hex:', psbtHex);
+    const signedPsbt = await this.client.walletProcessPsbt(
+      Buffer.from(psbtHex, 'hex').toString('base64'),
+      sign,
+      sighashtype,
+      bip32derivs,
+      finalize
+    );
+    console.log('Signed PSBT:', signedPsbt);
 
-    if (!signedPsbt.complete) {
-      console.error("PSBT signing incomplete");
+    if (!signedPsbt.complete && finalize) {
+      console.error('PSBT signing incomplete');
     }
 
     return Buffer.from(signedPsbt.psbt, "base64").toString("hex");
@@ -164,10 +178,22 @@ export class BitcoinCoreWallet extends WalletProvider {
     return Buffer.from(combinedPsbt, "base64").toString("hex");
   }
 
-  async signPsbts(psbtsHexes: string[]): Promise<string[]> {
+  async signPsbts(
+    psbtsHexes: string[],
+    sign: boolean = true,
+    sighashtype: string = 'DEFAULT',
+    bip32derivs: boolean = true,
+    finalize: boolean = true
+  ): Promise<string[]> {
     const signedPsbts = [];
     for (const psbtHex of psbtsHexes) {
-      const signedPsbt = await this.signPsbt(psbtHex);
+      const signedPsbt = await this.signPsbt(
+        psbtHex,
+        sign,
+        sighashtype,
+        bip32derivs,
+        finalize
+      );
       signedPsbts.push(signedPsbt);
     }
     return signedPsbts;
