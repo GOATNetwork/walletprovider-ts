@@ -133,6 +133,10 @@ export class BitcoinCoreWallet extends WalletProvider {
     return this.client.walletCreateFundedPsbt(inputs, outputs, locktime, options, bip32derivs);
   }
 
+  async getAddressInfo(addr: string) {
+      return await this.client.getAddressInfo(addr);
+  }
+
   async finalizePsbt(
     psbtHex: string
   ): Promise<{ psbt: string; hex: string; complete: boolean }> {
@@ -153,7 +157,7 @@ export class BitcoinCoreWallet extends WalletProvider {
     sign: boolean = true,
     sighashtype: string = 'DEFAULT',
     bip32derivs: boolean = true,
-        finalize: boolean = true
+    finalize: boolean = true
   ): Promise<string> {
     console.log('Signing PSBT with hex:', psbtHex);
     const signedPsbt = await this.client.walletProcessPsbt(

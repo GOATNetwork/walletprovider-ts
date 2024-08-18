@@ -18,6 +18,7 @@ export declare class BitcoinCoreWallet extends WalletProvider {
         fee: number;
         changepos: number;
     }>;
+    getAddressInfo(addr: string): Promise<any>;
     finalizePsbt(psbtHex: string): Promise<{
         psbt: string;
         hex: string;
