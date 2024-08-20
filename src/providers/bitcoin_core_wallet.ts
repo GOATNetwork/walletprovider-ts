@@ -152,6 +152,10 @@ export class BitcoinCoreWallet extends WalletProvider {
     return this.client.decodePsbt(Buffer.from(psbtHex, "hex").toString("base64"));
   }
 
+  async analyzePsbt(psbtHex: string) {
+    return this.client.analyzePsbt(Buffer.from(psbtHex, "hex").toString("base64"));
+  }
+
   async signPsbt(
     psbtHex: string,
     sign: boolean = true,

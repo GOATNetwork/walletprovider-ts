@@ -1,4 +1,4 @@
-export declare type Fees = {
+export type Fees = {
     fastestFee: number;
     halfHourFee: number;
     hourFee: number;
@@ -18,7 +18,7 @@ export declare enum Network {
     SIGNET = "signet",
     RETEST = "regtest"
 }
-export declare type WalletInfo = {
+export type WalletInfo = {
     publicKeyHex: string;
     address: string;
 };
